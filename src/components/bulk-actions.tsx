@@ -58,7 +58,7 @@ export default function BulkActions({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-start justify-between pt-3 px-3">
+    <div className="flex flex-col md:flex-row md:items-start justify-between pt-3 px-3">
       <div className="flex flex-col items-center mb-4 gap-1 sm:mb-0">
         <Button
           variant={bulkSelectionMode ? "secondary" : "outline"}
@@ -100,7 +100,7 @@ export default function BulkActions({
                 size="sm"
                 className="p-2"
               >
-                <span className="hidden sm:block">Clear Selection</span>
+                <span className="hidden lg:block">Clear Selection</span>
                 <SquareDashedMousePointer />
               </Button>,
               <Button
@@ -117,9 +117,11 @@ export default function BulkActions({
                 size="sm"
                 className="p-2"
               >
-                {selectedTasks.length === tasks.length
-                  ? "Deselect All"
-                  : "Select All"}
+                <span className="hidden lg:block">
+                  {selectedTasks.length === tasks.length
+                    ? "Deselect All"
+                    : "Select All"}
+                </span>
                 <SquareMousePointer />
               </Button>,
               <DropdownMenu
@@ -137,7 +139,7 @@ export default function BulkActions({
               >
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="p-2">
-                    <span className="hidden sm:block">Update</span>
+                    Update
                     <ArrowDownNarrowWide className="translate-y-[1px]" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -173,7 +175,7 @@ export default function BulkActions({
                 size="sm"
                 className="flex p-2"
               >
-                Mark Complete
+                <span className="hidden lg:block">Mark Complete</span>
                 <ListCheck />
               </Button>,
               <Button
@@ -187,7 +189,7 @@ export default function BulkActions({
                 size="sm"
                 className="flex p-2"
               >
-                Mark Incomplete
+                <span className="hidden lg:block">Mark Incomplete</span>
                 <ListX />
               </Button>,
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
