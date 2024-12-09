@@ -51,6 +51,7 @@ export default function App() {
           <Card>
             <BulkActions
               selectedTasks={state.selectedTasks}
+              tasks={state.taskItems}
               dispatch={dispatch}
               bulkSelectionMode={bulkSelectionMode}
               setBulkSelectionMode={setBulkSelectionMode}
