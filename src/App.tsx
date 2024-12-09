@@ -2,6 +2,7 @@ import { useReducer, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { taskReducer } from "@/lib/tasks/reducer";
+import { getFilteredTasks } from "@/lib/tasks/utils";
 import { TasksState } from "@/lib/tasks/types";
 import { TaskItemComponent } from "@/components/task-item";
 import { Toaster } from "@/components/ui/toaster";
@@ -60,21 +61,29 @@ export default function App() {
             setBulkSelectionMode={setBulkSelectionMode}
           />
           <CardContent className="px-4 py-2 space-y-2">
-            {state.taskItems.length > 0 ? (
-              state.taskItems.map((item) => (
-                <TaskItemComponent
-                  key={item.id}
-                  task={item}
-                  selectedTasks={state.selectedTasks}
-                  dispatch={dispatch}
-                  bulkSelectionMode={bulkSelectionMode}
-                  setBulkSelectionMode={setBulkSelectionMode}
-                />
-              ))
-            ) : (
+            {state.taskItems.length === 0 ? (
               <p className="text-center text-muted-foreground mb-4">
                 No task items
               </p>
+            ) : (
+              <>
+                {getFilteredTasks(state.taskItems, state.filter).map((item) => (
+                  <TaskItemComponent
+                    key={item.id}
+                    task={item}
+                    selectedTasks={state.selectedTasks}
+                    dispatch={dispatch}
+                    bulkSelectionMode={bulkSelectionMode}
+                    setBulkSelectionMode={setBulkSelectionMode}
+                  />
+                ))}
+                {getFilteredTasks(state.taskItems, state.filter).length ===
+                  0 && (
+                  <p className="text-center text-muted-foreground mb-4">
+                    No tasks match the current filters
+                  </p>
+                )}
+              </>
             )}
           </CardContent>
         </Card>
