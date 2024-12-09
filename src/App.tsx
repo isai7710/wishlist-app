@@ -30,54 +30,52 @@ export default function App() {
   };
 
   return (
-    <>
-      <main
-        className={`min-h-screen transition-colors ${darkMode ? "dark" : ""}`}
-      >
-        <div className="container max-w-3xl mx-auto p-4 space-y-4">
-          <header className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Task Priority Manager</h1>
-            <Button variant="outline" size="icon" onClick={toggleDarkMode}>
-              {darkMode ? (
-                <Sun className="h-[1.2rem] w-[1.2rem]" />
-              ) : (
-                <Moon className="h-[1.2rem] w-[1.2rem]" />
-              )}
-            </Button>
-          </header>
+    <main
+      className={`min-h-screen transition-colors ${darkMode ? "dark" : ""}`}
+    >
+      <div className="container max-w-3xl mx-auto p-4 space-y-4">
+        <header className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Task Priority Manager</h1>
+          <Button variant="outline" size="icon" onClick={toggleDarkMode}>
+            {darkMode ? (
+              <Sun className="h-[1.2rem] w-[1.2rem]" />
+            ) : (
+              <Moon className="h-[1.2rem] w-[1.2rem]" />
+            )}
+          </Button>
+        </header>
 
-          <TaskForm errors={state.errors} dispatch={dispatch} />
+        <TaskForm errors={state.errors} dispatch={dispatch} />
 
-          <Card>
-            <BulkActions
-              selectedTasks={state.selectedTasks}
-              tasks={state.taskItems}
-              dispatch={dispatch}
-              bulkSelectionMode={bulkSelectionMode}
-              setBulkSelectionMode={setBulkSelectionMode}
-            />
-            <CardContent className="px-4 py-2 space-y-2">
-              {state.taskItems.length > 0 ? (
-                state.taskItems.map((item) => (
-                  <TaskItemComponent
-                    key={item.id}
-                    task={item}
-                    selectedTasks={state.selectedTasks}
-                    dispatch={dispatch}
-                    bulkSelectionMode={bulkSelectionMode}
-                    setBulkSelectionMode={setBulkSelectionMode}
-                  />
-                ))
-              ) : (
-                <p className="text-center text-muted-foreground mb-4">
-                  No task items
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+        <Card>
+          <BulkActions
+            selectedTasks={state.selectedTasks}
+            tasks={state.taskItems}
+            dispatch={dispatch}
+            bulkSelectionMode={bulkSelectionMode}
+            setBulkSelectionMode={setBulkSelectionMode}
+          />
+          <CardContent className="px-4 py-2 space-y-2">
+            {state.taskItems.length > 0 ? (
+              state.taskItems.map((item) => (
+                <TaskItemComponent
+                  key={item.id}
+                  task={item}
+                  selectedTasks={state.selectedTasks}
+                  dispatch={dispatch}
+                  bulkSelectionMode={bulkSelectionMode}
+                  setBulkSelectionMode={setBulkSelectionMode}
+                />
+              ))
+            ) : (
+              <p className="text-center text-muted-foreground mb-4">
+                No task items
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
       <Toaster />
-    </>
+    </main>
   );
 }
