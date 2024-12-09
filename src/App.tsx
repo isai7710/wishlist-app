@@ -13,8 +13,8 @@ export default function App() {
   const initialState: TasksState = {
     taskItems: [],
     filter: {
-      priority: "All",
-      status: "Active",
+      priorities: [],
+      status: null,
     },
     errors: {},
     selectedTasks: [],
@@ -45,7 +45,11 @@ export default function App() {
           </Button>
         </header>
 
-        <TaskForm errors={state.errors} dispatch={dispatch} />
+        <TaskForm
+          errors={state.errors}
+          dispatch={dispatch}
+          filter={state.filter}
+        />
 
         <Card>
           <BulkActions
