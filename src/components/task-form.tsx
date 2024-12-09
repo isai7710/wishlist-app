@@ -123,7 +123,7 @@ export default function TaskForm({ errors, dispatch }: TaskFormProps) {
       </Button>
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <Button variant="outline" size="icon">
+          <Button type="button" variant="outline" size="icon">
             <Blocks />
           </Button>
         </DropdownMenuTrigger>
@@ -141,6 +141,7 @@ export default function TaskForm({ errors, dispatch }: TaskFormProps) {
           </div>
           <Button
             className="w-full"
+            type="button"
             onClick={() => {
               const randomTasks = generateRandomTasks(seedCount);
               randomTasks.forEach((task) => {
