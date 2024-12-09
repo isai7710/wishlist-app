@@ -18,17 +18,19 @@ import {
   ListCheck,
   ListX,
   SquareDashedMousePointer,
+  SquareMousePointer,
   Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "motion/react";
-import { TaskAction, TasksState } from "@/lib/tasks/types";
+import { TaskAction, TaskItem, TasksState } from "@/lib/tasks/types";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { DialogClose } from "@radix-ui/react-dialog";
 
 interface BulkActionProps {
   selectedTasks: TasksState["selectedTasks"];
+  tasks: TaskItem[];
   dispatch: React.Dispatch<TaskAction>;
   bulkSelectionMode: boolean;
   setBulkSelectionMode: React.Dispatch<React.SetStateAction<boolean>>;
@@ -36,6 +38,7 @@ interface BulkActionProps {
 
 export default function BulkActions({
   selectedTasks,
+  tasks,
   dispatch,
   bulkSelectionMode,
   setBulkSelectionMode,
@@ -87,7 +90,7 @@ export default function BulkActions({
                 if (selectedTasks.length === 0) {
                   toast({
                     variant: "destructive",
-                    title: "Select tasks please",
+                    title: "No tasks selected!",
                   });
                   return;
                 }
@@ -102,6 +105,26 @@ export default function BulkActions({
             >
               <span className="hidden sm:block">Clear</span>
               <SquareDashedMousePointer />
+            </Button>
+            <Button
+              onClick={() => {
+                dispatch({ type: "TOGGLE_SELECT_ALL" });
+              }}
+              variant="outline"
+              size="sm"
+              className="p-2"
+            >
+              {selectedTasks.length === tasks.length ? (
+                <>
+                  <span className="hidden sm:block">Clear All</span>
+                  <SquareMousePointer />
+                </>
+              ) : (
+                <>
+                  <span className="hidden sm:block">Select All</span>
+                  <SquareMousePointer />
+                </>
+              )}
             </Button>
             <Button
               onClick={() => {
