@@ -9,14 +9,14 @@ export interface TaskItem {
 export interface TasksState {
   taskItems: TaskItem[];
   filter: {
-    priority: "Low" | "Medium" | "High" | "All";
-    status: "Active" | "Completed";
+    priorities: Array<"Low" | "Medium" | "High">;
+    status: "Active" | "Completed" | null;
   };
   errors: {
     task?: string;
     priority?: string;
   };
-  selectedTasks: string[]; // array of id's of selected tasks
+  selectedTasks: string[];
 }
 
 export type TaskAction =

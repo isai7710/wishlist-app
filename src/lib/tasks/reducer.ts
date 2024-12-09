@@ -132,6 +132,15 @@ export function taskReducer(state: TasksState, action: TaskAction): TasksState {
             : [],
       };
 
+    case "SET_FILTER":
+      return {
+        ...state,
+        filter: {
+          ...state.filter,
+          ...action.payload,
+        },
+      };
+
     default:
       return state;
   }
