@@ -60,7 +60,7 @@ export function taskReducer(state: TasksState, action: TaskAction): TasksState {
         ...state,
         // does the selectedTasks array already include a task with the payload id?
         selectedTasks: state.selectedTasks.includes(action.payload)
-          ? state.selectedTasks.filter((id) => id !== action.payload) // if so, remove that ID from the array
+          ? state.selectedTasks.filter((id) => id !== action.payload) // if so, return new array with that ID removed
           : [...state.selectedTasks, action.payload], // if not, add that id to the array
       };
 
@@ -121,6 +121,15 @@ export function taskReducer(state: TasksState, action: TaskAction): TasksState {
       return {
         ...state,
         selectedTasks: [],
+      };
+
+    case "TOGGLE_SELECT_ALL":
+      return {
+        ...state,
+        selectedTasks:
+          state.selectedTasks.length !== state.taskItems.length
+            ? state.taskItems.map((task) => task.id)
+            : [],
       };
 
     default:

@@ -20,6 +20,7 @@ export interface TasksState {
 }
 
 export type TaskAction =
+  // --- INDIVIDUAL TASK ACTIONS ---
   | { type: "ADD_TASK"; payload: Omit<TaskItem, "id" | "createdAt"> }
   | {
       type: "DELETE_TASK";
@@ -37,6 +38,7 @@ export type TaskAction =
       type: "TOGGLE_SELECT";
       payload: string; // id of the task to toggle
     }
+  // --- BULK TASK ACTIONS ---
   | {
       type: "BULK_DELETE";
     }
@@ -51,13 +53,16 @@ export type TaskAction =
       type: "BULK_MARK_AS_INCOMPLETE";
     }
   | { type: "CLEAR_SELECTED" }
+  | { type: "TOGGLE_SELECT_ALL" }
   | {
       type: "CLEAR_COMPLETED";
       payload: void; // removes all completed tasks
     }
+  // --- STATE ERROR ACTIONS ---
   | {
       type: "SET_ERROR";
       payload: Partial<TasksState["errors"]>; // for error handling
     }
   | { type: "CLEAR_ERRORS" }
+  // --- FILTERING ACTIONS
   | { type: "SET_FILTER"; payload: Partial<TasksState["filter"]> };
