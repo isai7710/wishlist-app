@@ -58,7 +58,7 @@ export default function BulkActions({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between pt-3 px-3">
+    <div className="flex flex-col sm:flex-row sm:items-start justify-between pt-3 px-3">
       <div className="flex flex-col items-center mb-4 gap-1 sm:mb-0">
         <Button
           variant={bulkSelectionMode ? "secondary" : "outline"}
@@ -85,170 +85,181 @@ export default function BulkActions({
         </AnimatePresence>
       </div>
 
-      <AnimatePresence>
-        {bulkSelectionMode && (
-          <motion.div
-            initial={{ y: -10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -10, opacity: 0 }}
-            className="grid grid-cols-3 items-center justify-center gap-2"
-          >
-            <Button
-              onClick={() =>
-                handleAction(
-                  () => dispatch({ type: "CLEAR_SELECTED" }),
-                  "No tasks selected!",
-                )
-              }
-              variant="outline"
-              size="sm"
-              className="p-2"
-            >
-              <span className="hidden sm:block">Clear Selection</span>
-              <SquareDashedMousePointer />
-            </Button>
-            <Button
-              onClick={() => {
-                if (tasks.length === 0) {
-                  toast({
-                    variant: "destructive",
-                    title: "No tasks to select",
-                  });
+      <div className="flex items-center justify-center gap-2">
+        <AnimatePresence>
+          {bulkSelectionMode &&
+            [
+              <Button
+                onClick={() =>
+                  handleAction(
+                    () => dispatch({ type: "CLEAR_SELECTED" }),
+                    "No tasks selected!",
+                  )
                 }
-                dispatch({ type: "TOGGLE_SELECT_ALL" });
-              }}
-              variant="outline"
-              size="sm"
-              className="p-2"
-            >
-              {selectedTasks.length === tasks.length
-                ? "Deselect All"
-                : "Select All"}
-              <SquareMousePointer />
-            </Button>
-            <DropdownMenu
-              open={isDropdownOpen}
-              onOpenChange={(open) => {
-                if (open && selectedTasks.length === 0) {
-                  toast({
-                    variant: "destructive",
-                    title: "Select tasks to update please",
-                  });
-                  return;
-                }
-                setIsDropdownOpen(open);
-              }}
-            >
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="p-2">
-                  <span className="hidden sm:block">Update</span>
-                  <ArrowDownNarrowWide className="translate-y-[1px]" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                {["Low", "Medium", "High"].map((priority) => (
-                  <DropdownMenuItem
-                    key={priority}
-                    onClick={() =>
-                      handleAction(() => {
-                        dispatch({
-                          type: "BULK_UPDATE_PRIORITY",
-                          payload: priority as TaskItem["priority"],
-                        });
-                        toast({
-                          title: `Updated ${selectedTasks.length} task priorit${selectedTasks.length > 1 ? "ies" : "y"} to ${priority}`,
-                        });
-                      }, "Select tasks to update please")
-                    }
-                  >
-                    Set to {priority}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button
-              onClick={() =>
-                handleAction(
-                  () => dispatch({ type: "BULK_MARK_AS_COMPLETE" }),
-                  "Select tasks please",
-                )
-              }
-              variant="outline"
-              size="sm"
-              className="flex p-2"
-            >
-              Mark Complete
-              <ListCheck />
-            </Button>
-            <Button
-              onClick={() =>
-                handleAction(
-                  () => dispatch({ type: "BULK_MARK_AS_INCOMPLETE" }),
-                  "Select tasks please",
-                )
-              }
-              variant="outline"
-              size="sm"
-              className="flex p-2"
-            >
-              Mark Incomplete
-              <ListX />
-            </Button>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  onClick={(e) => {
-                    if (selectedTasks.length === 0) {
-                      e.preventDefault();
-                      toast({
-                        variant: "destructive",
-                        title: "No tasks selected!",
-                      });
-                      return;
-                    }
-                  }}
-                  variant="destructive"
-                  size="sm"
-                  className="gap-1.5"
-                >
-                  Delete
-                  <Trash2 />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Are you sure?</DialogTitle>
-                  <DialogDescription>
-                    You are about to delete {selectedTasks.length} selected task
-                    {selectedTasks.length !== 1 ? "s" : ""}. This action cannot
-                    be undone.
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="secondary" className="bg-accent">
-                      Go Back
-                    </Button>
-                  </DialogClose>
-                  <DialogClose asChild>
-                    <Button
-                      onClick={() => {
-                        dispatch({ type: "BULK_DELETE" });
-                        toast({
-                          title: `Deleted ${selectedTasks.length} task${selectedTasks.length > 1 ? "s" : ""}`,
-                        });
-                      }}
-                      variant="destructive"
+                variant="outline"
+                size="sm"
+                className="p-2"
+              >
+                <span className="hidden sm:block">Clear Selection</span>
+                <SquareDashedMousePointer />
+              </Button>,
+              <Button
+                onClick={() => {
+                  if (tasks.length === 0) {
+                    toast({
+                      variant: "destructive",
+                      title: "No tasks to select",
+                    });
+                  }
+                  dispatch({ type: "TOGGLE_SELECT_ALL" });
+                }}
+                variant="outline"
+                size="sm"
+                className="p-2"
+              >
+                {selectedTasks.length === tasks.length
+                  ? "Deselect All"
+                  : "Select All"}
+                <SquareMousePointer />
+              </Button>,
+              <DropdownMenu
+                open={isDropdownOpen}
+                onOpenChange={(open) => {
+                  if (open && selectedTasks.length === 0) {
+                    toast({
+                      variant: "destructive",
+                      title: "Select tasks to update please",
+                    });
+                    return;
+                  }
+                  setIsDropdownOpen(open);
+                }}
+              >
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="p-2">
+                    <span className="hidden sm:block">Update</span>
+                    <ArrowDownNarrowWide className="translate-y-[1px]" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  {["Low", "Medium", "High"].map((priority) => (
+                    <DropdownMenuItem
+                      key={priority}
+                      onClick={() =>
+                        handleAction(() => {
+                          dispatch({
+                            type: "BULK_UPDATE_PRIORITY",
+                            payload: priority as TaskItem["priority"],
+                          });
+                          toast({
+                            title: `Updated ${selectedTasks.length} task priorit${selectedTasks.length > 1 ? "ies" : "y"} to ${priority}`,
+                          });
+                        }, "Select tasks to update please")
+                      }
                     >
-                      I'm sure
-                    </Button>
-                  </DialogClose>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                      Set to {priority}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>,
+              <Button
+                onClick={() =>
+                  handleAction(
+                    () => dispatch({ type: "BULK_MARK_AS_COMPLETE" }),
+                    "Select tasks please",
+                  )
+                }
+                variant="outline"
+                size="sm"
+                className="flex p-2"
+              >
+                Mark Complete
+                <ListCheck />
+              </Button>,
+              <Button
+                onClick={() =>
+                  handleAction(
+                    () => dispatch({ type: "BULK_MARK_AS_INCOMPLETE" }),
+                    "Select tasks please",
+                  )
+                }
+                variant="outline"
+                size="sm"
+                className="flex p-2"
+              >
+                Mark Incomplete
+                <ListX />
+              </Button>,
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    onClick={(e) => {
+                      if (selectedTasks.length === 0) {
+                        e.preventDefault();
+                        toast({
+                          variant: "destructive",
+                          title: "No tasks selected!",
+                        });
+                        return;
+                      }
+                    }}
+                    variant="destructive"
+                    size="sm"
+                    className="gap-1.5"
+                  >
+                    Delete
+                    <Trash2 />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Are you sure?</DialogTitle>
+                    <DialogDescription>
+                      You are about to delete {selectedTasks.length} selected
+                      task
+                      {selectedTasks.length !== 1 ? "s" : ""}. This action
+                      cannot be undone.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="secondary" className="bg-accent">
+                        Go Back
+                      </Button>
+                    </DialogClose>
+                    <DialogClose asChild>
+                      <Button
+                        onClick={() => {
+                          dispatch({ type: "BULK_DELETE" });
+                          toast({
+                            title: `Deleted ${selectedTasks.length} task${selectedTasks.length > 1 ? "s" : ""}`,
+                          });
+                        }}
+                        variant="destructive"
+                      >
+                        I'm sure
+                      </Button>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>,
+            ].map((button, i) => (
+              <motion.div
+                key={i}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: -0.8, opacity: 0 }}
+                transition={{
+                  delay: i * 0.1,
+                  duration: 0.2,
+                  ease: "easeInOut",
+                }}
+              >
+                {button}
+              </motion.div>
+            ))}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
