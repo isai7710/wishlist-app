@@ -1,4 +1,4 @@
-import { TaskItem } from "@/lib/tasks/types";
+import { TaskItem, TasksState } from "@/lib/tasks/types";
 
 const sampleTasks = [
   "Complete project documentation",
@@ -37,4 +37,44 @@ export function generateRandomTasks(
   });
 
   return randomTaskItems;
+}
+
+/**
+ * Filters tasks based on selected priority levels and completion status
+ * @param tasks - Array of all task items
+ * @param filter - Current filter state containing priorities and status
+ * @returns Filtered array of tasks that match the current filter criteria
+ */
+export function getFilteredTasks(
+  tasks: TaskItem[],
+  filter: TasksState["filter"],
+) {
+  // Return all tasks if no filters are applied
+  if (filter.priorities.length === 0 && filter.status === null) {
+    return tasks;
+  }
+
+  // filter function maps through items in array and returns new array with item that passes criteria (returns true) we define within
+  return tasks.filter((task) => {
+    // Exclude task if its priority isn't in the selected priorities
+    if (
+      filter.priorities.length > 0 &&
+      !filter.priorities.includes(task.priority)
+    ) {
+      return false;
+    }
+
+    // Handle status filtering
+    if (filter.status === "Active") {
+      // we only want incomplete tasks in this case, so keep any task that has
+      // completed property as false (in which case !task.completed returns true)
+      return !task.completed;
+    }
+    if (filter.status === "Completed") {
+      return task.completed; // same process as before, only keep completed tasks (task.complete returns true)
+    }
+
+    // if we reach this point then there were no filter options set so we can simply return all tasks
+    return true;
+  });
 }
