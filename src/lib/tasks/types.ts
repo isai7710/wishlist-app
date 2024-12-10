@@ -15,6 +15,7 @@ export interface TasksState {
   errors: {
     task?: string;
     priority?: string;
+    prompt?: string;
   };
   selectedTasks: string[];
 }
