@@ -13,8 +13,6 @@ import {
 import { TaskItem, TasksState, TaskAction } from "@/lib/tasks/types";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
-import TaskSeeder from "./task-seeder";
-import TaskFilter from "./task-filter";
 
 interface TaskFormProps {
   errors: TasksState["errors"];
@@ -22,7 +20,7 @@ interface TaskFormProps {
   filter: Partial<TasksState["filter"]>;
 }
 
-export default function TaskForm({ errors, dispatch, filter }: TaskFormProps) {
+export default function TaskForm({ errors, dispatch }: TaskFormProps) {
   const [taskInput, setTaskInput] = useState<string>("");
   const [priorityInput, setPriorityInput] = useState<TaskItem["priority"] | "">(
     "",
@@ -62,7 +60,11 @@ export default function TaskForm({ errors, dispatch, filter }: TaskFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
+    <form
+      id="add-task-form"
+      onSubmit={handleSubmit}
+      className="flex flex-col sm:flex-row gap-2 w-full"
+    >
       <div className="flex-grow">
         <Input
           type="text"
@@ -118,8 +120,6 @@ export default function TaskForm({ errors, dispatch, filter }: TaskFormProps) {
         <Button type="submit" size="icon" className="shrink-0">
           <Plus />
         </Button>
-        <TaskSeeder dispatch={dispatch} />
-        <TaskFilter filter={filter} dispatch={dispatch} />
       </div>
     </form>
   );
