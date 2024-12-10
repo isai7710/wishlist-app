@@ -42,7 +42,7 @@ export default function TaskFilter({ filter, dispatch }: TaskFilterProps) {
           type="button"
           variant="outline"
           size="icon"
-          className="shrink-0 relative"
+          className="shrink-0"
         >
           <Filter />
         </Button>
