@@ -1,45 +1,31 @@
 import { TaskItem, TasksState } from "@/lib/tasks/types";
 
-const HUGGING_FACE_TOKEN = import.meta.env.VITE_HUGGING_FACE_API_TOKEN;
-const TIMEOUT = 10000;
+const PROMPT_TEMPLATE = `Create a short task description that starts with a verb in present tense and ends with a period. Format: "Verb + task description".
+Subject: {subject}
+Rules:
+- Must be a single sentence
+- Must start with an action verb
+- Must be specific and actionable
+- Maximum 15 words
+- Must end with a period
+- No prefixes like "Task:" or similar
+- Professional tone
 
-export async function generateTaskText(
-  prompt: string = "Generate a single concise development task:",
-) {
-  if (!HUGGING_FACE_TOKEN) {
-    throw new Error(
-      "Hugging Face API token not found in environment variables",
-    );
-  }
+Example format: "Design a logo for the new coffee shop brand."
+Your response must only contain the task description, nothing else.`;
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
-
+export async function generateTaskText(subject: string = "Software") {
   try {
-    const response = await fetch(
-      "https://api-inference.huggingface.co/models/google/gemma-2-2b-it",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${HUGGING_FACE_TOKEN}`,
-          "Content-Type": "application/json",
-          "x-use-cache": "false", // disable cache-layer resulting in new query when inputs are the same
-        },
-        body: JSON.stringify({
-          inputs: prompt,
-          parameters: {
-            max_new_tokens: 50,
-            temperature: 0.7,
-            top_p: 0.95,
-            return_full_text: false,
-          },
-        }),
-        signal: controller.signal,
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({ subject: subject }),
+    });
 
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.statusText}`);
+      throw new Error(`Failed to generate description: ${response.statusText}`);
     }
 
     const result = await response.json();
@@ -59,8 +45,6 @@ export async function generateTaskText(
       throw new Error(`Failed to generate task: ${error.message}`);
     }
     throw error;
-  } finally {
-    clearTimeout(timeoutId);
   }
 }
 
@@ -79,19 +63,7 @@ export async function generateRandomTasks(
   const tasks = await Promise.all(
     Array.from({ length: count }, async (_, index) => {
       try {
-        const enhancedPrompt = `Create a short task description that starts with a verb in present tense and ends with a period. Format: "Verb + task description". 
-        Subject: ${subject}
-        Rules:
-        - Must be a single sentence
-        - Must start with an action verb
-        - Must be specific and actionable
-        - Maximum 15 words
-        - Must end with a period
-        - No prefixes like "Task:" or similar
-        - Professional tone
-
-        Example format: "Design a logo for the new coffee shop brand."
-        Your response must only contain the task description, nothing else.`;
+        const enhancedPrompt = PROMPT_TEMPLATE.replace("{subject}", subject);
         const task = await generateTaskText(enhancedPrompt);
 
         const priorities: TaskItem["priority"][] = [
