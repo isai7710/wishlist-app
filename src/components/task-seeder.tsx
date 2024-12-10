@@ -93,6 +93,7 @@ export default function TaskSeeder({ errors, dispatch }: TaskSeederProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64">
         <form
+          id="seed-tasks-form"
           onSubmit={handleSeedSubmission}
           className="flex flex-col gap-4 p-4"
         >
@@ -134,7 +135,12 @@ export default function TaskSeeder({ errors, dispatch }: TaskSeederProps) {
             />
             <Badge variant="secondary">{seedCount}</Badge>
           </div>
-          <Button className="w-full" type="submit" disabled={isLoading}>
+          <Button
+            form="seed-tasks-form"
+            className="w-full"
+            type="submit"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <>
                 <Loader className="animate-spin" /> Generating...
