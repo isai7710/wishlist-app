@@ -8,8 +8,6 @@ import { TaskItemComponent } from "@/components/task-item";
 import { Toaster } from "@/components/ui/toaster";
 import { Sun, Moon } from "lucide-react";
 import TaskForm from "@/components/task-form";
-import TaskSeeder from "@/components/task-seeder";
-import TaskFilter from "@/components/task-filter";
 import BulkActions from "@/components/bulk-actions";
 
 export default function App() {
@@ -36,7 +34,7 @@ export default function App() {
     <main
       className={`min-h-screen transition-colors ${darkMode ? "dark" : ""}`}
     >
-      <div className="container max-w-4xl mx-auto p-4 space-y-4">
+      <div className="max-w-4xl mx-auto p-4 space-y-4">
         <header className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Task Priority Manager</h1>
           <Button variant="outline" size="icon" onClick={toggleDarkMode}>
@@ -48,15 +46,11 @@ export default function App() {
           </Button>
         </header>
 
-        <div className="flex gap-2">
-          <TaskForm
-            errors={state.errors}
-            dispatch={dispatch}
-            filter={state.filter}
-          />
-          <TaskSeeder errors={state.errors} dispatch={dispatch} />
-          <TaskFilter filter={state.filter} dispatch={dispatch} />
-        </div>
+        <TaskForm
+          errors={state.errors}
+          dispatch={dispatch}
+          filter={state.filter}
+        />
 
         <Card>
           <BulkActions
