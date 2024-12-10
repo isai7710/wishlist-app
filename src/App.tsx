@@ -8,6 +8,8 @@ import { TaskItemComponent } from "@/components/task-item";
 import { Toaster } from "@/components/ui/toaster";
 import { Sun, Moon } from "lucide-react";
 import TaskForm from "@/components/task-form";
+import TaskSeeder from "@/components/task-seeder";
+import TaskFilter from "@/components/task-filter";
 import BulkActions from "@/components/bulk-actions";
 
 export default function App() {
@@ -46,11 +48,15 @@ export default function App() {
           </Button>
         </header>
 
-        <TaskForm
-          errors={state.errors}
-          dispatch={dispatch}
-          filter={state.filter}
-        />
+        <div className="flex gap-2">
+          <TaskForm
+            errors={state.errors}
+            dispatch={dispatch}
+            filter={state.filter}
+          />
+          <TaskSeeder errors={state.errors} dispatch={dispatch} />
+          <TaskFilter filter={state.filter} dispatch={dispatch} />
+        </div>
 
         <Card>
           <BulkActions
