@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-export default async function generate(
+module.exports = async function generate(
   request: VercelRequest,
   response: VercelResponse,
 ) {
@@ -63,4 +63,4 @@ export default async function generate(
   } finally {
     clearTimeout(timeoutId);
   }
-}
+};
