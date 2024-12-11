@@ -60,7 +60,7 @@ export default function TaskForm({ errors, dispatch, filter }: TaskFormProps) {
   };
 
   return (
-    <div className="flex gap-2 w-full">
+    <div className="flex items-center gap-2 w-full">
       <form
         id="add-task-form"
         onSubmit={handleSubmit}
