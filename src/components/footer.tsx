@@ -19,7 +19,7 @@ export default function Footer() {
             className="flex items-center space-x-1 hover:text-foreground transition-colors"
           >
             <span>Source</span>
-            <Github className="h-3 w-3" />
+            <Github height={14} width={14} />
           </a>
         </div>
       </div>
