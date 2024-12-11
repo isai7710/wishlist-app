@@ -100,7 +100,7 @@ export default function TaskSeeder({ errors, dispatch }: TaskSeederProps) {
           </div>
 
           <div
-            className="relative bg-background border border-input flex items-center justify-center w-full h-full text-sm antialiased"
+            className="relative bg-background border border-input flex items-center justify-center w-full h-full text-sm antialiased shadow-sm hover:bg-accent hover:text-accent-foreground hover:cursor-pointer transition-colors"
             style={{
               borderRadius: `calc(${borderRadius} * 0.96)`,
             }}

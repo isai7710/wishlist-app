@@ -8,8 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import TaskSeeder from "@/components/task-seeder";
-import TaskFilter from "@/components/task-filter";
+import TaskSeeder from "@/components/tasks/task-seeder";
+import TaskFilter from "@/components/tasks/task-filter";
 import { Plus } from "lucide-react";
 import { TaskItem, TasksState, TaskAction } from "@/lib/tasks/types";
 import { cn } from "@/lib/utils";
