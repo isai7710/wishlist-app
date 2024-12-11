@@ -1,18 +1,31 @@
 import { TaskItem, TasksState } from "@/lib/tasks/types";
 
-const PROMPT_TEMPLATE = `Create a short task description that starts with a verb in present tense and ends with a period. Format: "Verb + task description".
-Subject: {subject}
-Rules:
-- Must be a single sentence
-- Must start with an action verb
-- Must be specific and actionable
-- Maximum 15 words
-- Must end with a period
-- No prefixes like "Task:" or similar
-- Professional tone
+const PROMPT_TEMPLATE = `You are a task description generator. Generate a single, clear task description based on the subject provided.
 
-Example format: "Design a logo for the new coffee shop brand."
-Your response must only contain the task description, nothing else.`;
+Subject: {subject}
+
+Requirements:
+1. Start with an action verb in present tense (e.g., Create, Develop, Write)
+2. Include only plain text - no quotes, asterisks, or special characters
+3. Write exactly one sentence
+4. End with a period
+5. Use 15 words or fewer
+6. Be specific and actionable
+7. Use professional language
+8. Do not include any labels, prefixes, or metadata
+
+Valid examples:
+- Schedule quarterly review meeting with marketing team.
+- Create social media content calendar for December.
+- Update customer feedback database with recent survey results.
+
+Invalid examples:
+- "Design new logo" (missing period, has quotes)
+- *Review financial reports* (has asterisks)
+- Task: Send emails (has prefix)
+- Schedule meeting. Create agenda. (multiple sentences)
+
+Respond with only the task description, nothing else. Do not explain or add context.`;
 
 export async function generateTaskText(subject: string = "Software") {
   try {
@@ -33,10 +46,17 @@ export async function generateTaskText(subject: string = "Software") {
     if (!result[0]?.generated_text) {
       throw new Error("No generated text received");
     }
-    return result[0].generated_text
-      .trim()
-      .replace(/^["']|["']$/g, "")
-      .trim();
+    return (
+      result[0].generated_text
+        .trim()
+        // Remove quotes and asterisks
+        .replace(/["*`]/g, "")
+        // Ensure it ends with a period
+        .replace(/[.]*$/, ".")
+        // Remove multiple spaces
+        .replace(/\s+/g, " ")
+        .trim()
+    );
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === "AbortError") {
