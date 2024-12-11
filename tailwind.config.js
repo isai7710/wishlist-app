@@ -1,4 +1,4 @@
-import flattenColorPalette from "tailwindcss/lib/util/flattenColorPalette.js";
+import flattenColorPalette from "tailwindcss/lib/util/flattenColorPalette";
 import animatePlugin from "tailwindcss-animate";
 
 // This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).
