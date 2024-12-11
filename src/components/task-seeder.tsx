@@ -11,6 +11,7 @@ import { Blocks, Loader } from "lucide-react";
 import { TaskAction, TasksState } from "@/lib/tasks/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MovingBorder } from "@/components/ui/moving-border";
 import { generateRandomTasks } from "@/lib/tasks/utils";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
@@ -25,6 +26,7 @@ export default function TaskSeeder({ errors, dispatch }: TaskSeederProps) {
   const [taskSubject, setTaskSubject] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const borderRadius = "0.4rem";
 
   const handleSeedSubmission = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,14 +84,30 @@ export default function TaskSeeder({ errors, dispatch }: TaskSeederProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="shrink-0"
+        <div
+          className="bg-transparent relative text-xl h-[38px] w-[38px] p-[1px] overflow-hidden shrink-0"
+          style={{
+            borderRadius: borderRadius,
+          }}
         >
-          <Blocks />
-        </Button>
+          <div
+            className="absolute inset-0"
+            style={{ borderRadius: `calc(${borderRadius} * 0.96)` }}
+          >
+            <MovingBorder duration={3000} rx="30%" ry="30%">
+              <div className="h-20 w-20 opacity-[0.8] bg-[radial-gradient(var(--sky-500)_40%,transparent_60%)]" />
+            </MovingBorder>
+          </div>
+
+          <div
+            className="relative bg-background border border-input flex items-center justify-center w-full h-full text-sm antialiased"
+            style={{
+              borderRadius: `calc(${borderRadius} * 0.96)`,
+            }}
+          >
+            <Blocks className="w-5 h-5" strokeWidth={1.7} />
+          </div>
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64">
         <form
