@@ -120,7 +120,7 @@ export default function WishlistSeeder({
         >
           <div className="flex flex-col gap-1">
             <Label htmlFor="ai-prompt" className="text-sm">
-              AI-Generated Task
+              AI-Generated Wish
             </Label>
             <Input
               id="ai-prompt"
@@ -139,7 +139,7 @@ export default function WishlistSeeder({
                 "w-full",
                 errors.prompt && "border-red-500 focus-visible:ring-red-500",
               )}
-              placeholder="Enter task subject"
+              placeholder="Enter subject"
             />
             {errors.prompt && errors.prompt === "Prompt is required" && (
               <p className="text-sm text-red-500">{errors.prompt}</p>

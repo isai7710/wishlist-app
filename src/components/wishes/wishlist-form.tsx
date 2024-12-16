@@ -83,7 +83,7 @@ export default function WishlistForm({
                 });
               }
             }}
-            placeholder="Enter a new task"
+            placeholder="Enter a new wishlist item"
             className={cn(
               "flex-grow",
               errors.wish && "border-red-500 focus-visible:ring-red-500",
@@ -108,7 +108,7 @@ export default function WishlistForm({
           >
             <SelectTrigger
               className={cn(
-                "w-[130px] sm:w-full",
+                "w-[130px] sm:w-[140px]",
                 errors.priority && "border-red-500 focus-visible:ring-red-500",
               )}
             >

@@ -59,7 +59,7 @@ export default async function generate(
     console.error("Error:", error);
     return response
       .status(500)
-      .json({ error: "Failed to generate task description" });
+      .json({ error: "Failed to generate wish description" });
   } finally {
     clearTimeout(timeoutId);
   }

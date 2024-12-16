@@ -64,7 +64,7 @@ export default function BulkActions({
           variant={bulkSelectionMode ? "secondary" : "outline"}
           size="sm"
           onClick={() => setBulkSelectionMode(!bulkSelectionMode)}
-          className={bulkSelectionMode ? "border border-accent" : ""}
+          className={bulkSelectionMode ? "border border-white" : ""}
         >
           <span className={bulkSelectionMode ? "font-bold" : "font-medium"}>
             Bulk Actions
