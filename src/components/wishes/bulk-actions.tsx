@@ -23,22 +23,22 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "motion/react";
-import { TaskAction, TaskItem, TasksState } from "@/lib/tasks/types";
+import { WishlistAction, WishItem, WishlistState } from "@/lib/wishes/types";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { DialogClose } from "@radix-ui/react-dialog";
 
 interface BulkActionProps {
-  selectedTasks: TasksState["selectedTasks"];
-  tasks: TaskItem[];
-  dispatch: React.Dispatch<TaskAction>;
+  selectedWishes: WishlistState["selectedWishes"];
+  wishes: WishItem[];
+  dispatch: React.Dispatch<WishlistAction>;
   bulkSelectionMode: boolean;
   setBulkSelectionMode: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function BulkActions({
-  selectedTasks,
-  tasks,
+  selectedWishes,
+  wishes,
   dispatch,
   bulkSelectionMode,
   setBulkSelectionMode,
@@ -47,7 +47,7 @@ export default function BulkActions({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleAction = (action: () => void, errorMessage: string) => {
-    if (selectedTasks.length === 0) {
+    if (selectedWishes.length === 0) {
       toast({
         variant: "destructive",
         title: errorMessage,
@@ -78,8 +78,8 @@ export default function BulkActions({
               exit={{ x: -10, opacity: 0 }}
               className="text-xs text-muted-foreground"
             >
-              {selectedTasks.length} task
-              {selectedTasks.length !== 1 ? "s" : ""} selected
+              {selectedWishes.length} wish
+              {selectedWishes.length !== 1 ? "s" : ""} selected
             </motion.p>
           )}
         </AnimatePresence>
@@ -93,7 +93,7 @@ export default function BulkActions({
                 onClick={() =>
                   handleAction(
                     () => dispatch({ type: "CLEAR_SELECTED" }),
-                    "No tasks selected!",
+                    "No wishes selected!",
                   )
                 }
                 variant="outline"
@@ -105,10 +105,10 @@ export default function BulkActions({
               </Button>,
               <Button
                 onClick={() => {
-                  if (tasks.length === 0) {
+                  if (wishes.length === 0) {
                     toast({
                       variant: "destructive",
-                      title: "No tasks to select",
+                      title: "No wishes available to select",
                     });
                   }
                   dispatch({ type: "TOGGLE_SELECT_ALL" });
@@ -118,7 +118,7 @@ export default function BulkActions({
                 className="p-2"
               >
                 <span className="hidden lg:block">
-                  {selectedTasks.length === tasks.length
+                  {selectedWishes.length === wishes.length
                     ? "Deselect All"
                     : "Select All"}
                 </span>
@@ -127,10 +127,10 @@ export default function BulkActions({
               <DropdownMenu
                 open={isDropdownOpen}
                 onOpenChange={(open) => {
-                  if (open && selectedTasks.length === 0) {
+                  if (open && selectedWishes.length === 0) {
                     toast({
                       variant: "destructive",
-                      title: "Select tasks to update please",
+                      title: "Select wishes to update please",
                     });
                     return;
                   }
@@ -151,12 +151,12 @@ export default function BulkActions({
                         handleAction(() => {
                           dispatch({
                             type: "BULK_UPDATE_PRIORITY",
-                            payload: priority as TaskItem["priority"],
+                            payload: priority as WishItem["priority"],
                           });
                           toast({
-                            title: `Updated ${selectedTasks.length} task priorit${selectedTasks.length > 1 ? "ies" : "y"} to ${priority}`,
+                            title: `Updated ${selectedWishes.length} wish priorit${selectedWishes.length > 1 ? "ies" : "y"} to ${priority}`,
                           });
-                        }, "Select tasks to update please")
+                        }, "Select wishes to update please")
                       }
                     >
                       Set to {priority}
@@ -168,7 +168,7 @@ export default function BulkActions({
                 onClick={() =>
                   handleAction(
                     () => dispatch({ type: "BULK_MARK_AS_COMPLETE" }),
-                    "Select tasks please",
+                    "Select wishes please",
                   )
                 }
                 variant="outline"
@@ -182,7 +182,7 @@ export default function BulkActions({
                 onClick={() =>
                   handleAction(
                     () => dispatch({ type: "BULK_MARK_AS_INCOMPLETE" }),
-                    "Select tasks please",
+                    "Select wishes please",
                   )
                 }
                 variant="outline"
@@ -196,11 +196,11 @@ export default function BulkActions({
                 <DialogTrigger asChild>
                   <Button
                     onClick={(e) => {
-                      if (selectedTasks.length === 0) {
+                      if (selectedWishes.length === 0) {
                         e.preventDefault();
                         toast({
                           variant: "destructive",
-                          title: "No tasks selected!",
+                          title: "No wishes selected!",
                         });
                         return;
                       }
@@ -217,9 +217,9 @@ export default function BulkActions({
                   <DialogHeader>
                     <DialogTitle>Are you sure?</DialogTitle>
                     <DialogDescription>
-                      You are about to delete {selectedTasks.length} selected
-                      task
-                      {selectedTasks.length !== 1 ? "s" : ""}. This action
+                      You are about to delete {selectedWishes.length} selected
+                      wish
+                      {selectedWishes.length !== 1 ? "es" : ""}. This action
                       cannot be undone.
                     </DialogDescription>
                   </DialogHeader>
@@ -234,7 +234,7 @@ export default function BulkActions({
                         onClick={() => {
                           dispatch({ type: "BULK_DELETE" });
                           toast({
-                            title: `Deleted ${selectedTasks.length} task${selectedTasks.length > 1 ? "s" : ""}`,
+                            title: `Deleted ${selectedWishes.length} wish${selectedWishes.length > 1 ? "es" : ""}`,
                           });
                         }}
                         variant="destructive"

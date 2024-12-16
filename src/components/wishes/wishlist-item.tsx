@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { TaskAction, TaskItem, TasksState } from "@/lib/tasks/types";
+import { WishlistAction, WishItem, WishlistState } from "@/lib/wishes/types";
 import { MoreHorizontal, Check } from "lucide-react";
 import {
   DropdownMenu,
@@ -16,21 +16,21 @@ import { toast } from "@/hooks/use-toast";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
-interface TaskItemProps {
-  task: TaskItem;
-  selectedTasks: TasksState["selectedTasks"];
-  dispatch: React.Dispatch<TaskAction>;
+interface WishlistItemProps {
+  wish: WishItem;
+  selectedWishes: WishlistState["selectedWishes"];
+  dispatch: React.Dispatch<WishlistAction>;
   bulkSelectionMode: boolean;
   setBulkSelectionMode: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function TaskItemComponent({
-  task,
-  selectedTasks,
+export function WishlistItem({
+  wish,
+  selectedWishes,
   dispatch,
   bulkSelectionMode,
   setBulkSelectionMode,
-}: TaskItemProps) {
+}: WishlistItemProps) {
   return (
     <div className="flex items-center space-x-2 p-2 rounded-md bg-card hover:text-accent-foreground transition-colors">
       <AnimatePresence>
@@ -42,11 +42,11 @@ export function TaskItemComponent({
             className="flex"
           >
             <Checkbox
-              checked={selectedTasks.includes(task.id)}
+              checked={selectedWishes.includes(wish.id)}
               onClick={() =>
                 dispatch({
                   type: "TOGGLE_SELECT",
-                  payload: task.id,
+                  payload: wish.id,
                 })
               }
               className="border-2 border-primary"
@@ -60,31 +60,31 @@ export function TaskItemComponent({
           if (!bulkSelectionMode) {
             setBulkSelectionMode(!bulkSelectionMode);
           }
-          dispatch({ type: "TOGGLE_SELECT", payload: task.id });
+          dispatch({ type: "TOGGLE_SELECT", payload: wish.id });
         }}
         className={cn(
           "flex-grow cursor-pointer",
-          task.completed ? "text-muted-foreground" : "",
+          wish.completed ? "text-muted-foreground" : "",
         )}
       >
         <div className="flex items-center space-x-2">
           <p
-            className={`text-md font-medium ${task.completed ? "line-through" : ""}`}
+            className={`text-md font-medium ${wish.completed ? "line-through" : ""}`}
           >
-            {task.task}
+            {wish.wish}
           </p>
-          {task.completed && (
+          {wish.completed && (
             <p className="flex items-center gap-1 text-xs text-green-500">
               Completed <Check className="w-3 h-3" />
             </p>
           )}
         </div>
         <p className="text-xs text-muted-foreground">
-          {task.createdAt.toDateString()}
+          {wish.createdAt.toDateString()}
         </p>
       </div>
       <Badge variant="secondary" className="text-xs shadow-none">
-        {task.priority}
+        {wish.priority}
       </Badge>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -95,11 +95,11 @@ export function TaskItemComponent({
             onClick={() => {
               dispatch({
                 type: "TOGGLE_COMPLETION",
-                payload: task.id,
+                payload: wish.id,
               });
             }}
           >
-            Mark as {`${task.completed ? "incomplete" : "completed"}`}
+            Mark as {`${wish.completed ? "incomplete" : "completed"}`}
           </DropdownMenuItem>
 
           <DropdownMenuSub>
@@ -110,7 +110,7 @@ export function TaskItemComponent({
                   onClick={() =>
                     dispatch({
                       type: "UPDATE_PRIORITY",
-                      payload: { id: task.id, priority: "Low" },
+                      payload: { id: wish.id, priority: "Low" },
                     })
                   }
                 >
@@ -120,7 +120,7 @@ export function TaskItemComponent({
                   onClick={() =>
                     dispatch({
                       type: "UPDATE_PRIORITY",
-                      payload: { id: task.id, priority: "Medium" },
+                      payload: { id: wish.id, priority: "Medium" },
                     })
                   }
                 >
@@ -130,7 +130,7 @@ export function TaskItemComponent({
                   onClick={() =>
                     dispatch({
                       type: "UPDATE_PRIORITY",
-                      payload: { id: task.id, priority: "High" },
+                      payload: { id: wish.id, priority: "High" },
                     })
                   }
                 >
@@ -142,15 +142,15 @@ export function TaskItemComponent({
           <DropdownMenuItem
             onClick={() => {
               dispatch({
-                type: "DELETE_TASK",
-                payload: task.id,
+                type: "DELETE_WISH",
+                payload: wish.id,
               });
               toast({
-                title: "Successfully deleted task",
+                title: "Successfully deleted wish",
               });
             }}
           >
-            <span className="text-red-500">Delete Task</span>
+            <span className="text-red-500">Delete Wish</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

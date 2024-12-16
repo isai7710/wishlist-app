@@ -1,26 +1,26 @@
 import { useReducer, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { taskReducer } from "@/lib/tasks/reducer";
-import { getFilteredTasks } from "@/lib/tasks/utils";
-import { TasksState } from "@/lib/tasks/types";
+import { wishlistReducer } from "@/lib/wishes/reducer";
+import { getFilteredWishes } from "@/lib/wishes/utils";
+import { WishlistState } from "@/lib/wishes/types";
 import { Toaster } from "@/components/ui/toaster";
-import TaskForm from "@/components/tasks/task-form";
-import BulkActions from "@/components/tasks/bulk-actions";
-import { TaskItemComponent } from "@/components/tasks/task-item";
+import WishlistForm from "@/components/wishes/wishlist-form";
+import BulkActions from "@/components/wishes/bulk-actions";
+import { WishlistItem } from "@/components/wishes/wishlist-item";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 
-export default function App() {
-  const initialState: TasksState = {
-    taskItems: [],
+export default function WishlistApp() {
+  const initialState: WishlistState = {
+    wishItems: [],
     filter: {
       priorities: [],
       status: null,
     },
     errors: {},
-    selectedTasks: [],
+    selectedWishes: [],
   };
-  const [state, dispatch] = useReducer(taskReducer, initialState);
+  const [state, dispatch] = useReducer(wishlistReducer, initialState);
 
   const [darkMode, setDarkMode] = useState(false);
   const [bulkSelectionMode, setBulkSelectionMode] = useState(false);
@@ -37,7 +37,7 @@ export default function App() {
       <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
       <main className="flex-grow">
         <div className="max-w-4xl mx-auto p-4 space-y-4">
-          <TaskForm
+          <WishlistForm
             errors={state.errors}
             dispatch={dispatch}
             filter={state.filter}
@@ -45,35 +45,35 @@ export default function App() {
 
           <Card>
             <BulkActions
-              selectedTasks={state.selectedTasks}
-              tasks={state.taskItems}
+              selectedWishes={state.selectedWishes}
+              wishes={state.wishItems}
               dispatch={dispatch}
               bulkSelectionMode={bulkSelectionMode}
               setBulkSelectionMode={setBulkSelectionMode}
             />
             <CardContent className="px-4 py-2 space-y-2">
-              {state.taskItems.length === 0 ? (
+              {state.wishItems.length === 0 ? (
                 <p className="text-center text-muted-foreground mb-4">
-                  No task items
+                  No items in the wishlist
                 </p>
               ) : (
                 <>
-                  {getFilteredTasks(state.taskItems, state.filter).map(
-                    (item) => (
-                      <TaskItemComponent
-                        key={item.id}
-                        task={item}
-                        selectedTasks={state.selectedTasks}
+                  {getFilteredWishes(state.wishItems, state.filter).map(
+                    (wish) => (
+                      <WishlistItem
+                        key={wish.id}
+                        wish={wish}
+                        selectedWishes={state.selectedWishes}
                         dispatch={dispatch}
                         bulkSelectionMode={bulkSelectionMode}
                         setBulkSelectionMode={setBulkSelectionMode}
                       />
                     ),
                   )}
-                  {getFilteredTasks(state.taskItems, state.filter).length ===
+                  {getFilteredWishes(state.wishItems, state.filter).length ===
                     0 && (
                     <p className="text-center text-muted-foreground mb-4">
-                      No tasks match the current filters
+                      No items match the current filters
                     </p>
                   )}
                 </>

@@ -9,22 +9,25 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Filter } from "lucide-react";
-import { TaskAction, TasksState, TaskItem } from "@/lib/tasks/types";
+import { WishlistAction, WishlistState, WishItem } from "@/lib/wishes/types";
 
-interface TaskFilterProps {
-  filter: Partial<TasksState["filter"]>;
-  dispatch: React.Dispatch<TaskAction>;
+interface WishlistFilterProps {
+  filter: Partial<WishlistState["filter"]>;
+  dispatch: React.Dispatch<WishlistAction>;
 }
 
-export default function TaskFilter({ filter, dispatch }: TaskFilterProps) {
-  const handleStatusChange = (status: TasksState["filter"]["status"]) => {
+export default function WishlistFilter({
+  filter,
+  dispatch,
+}: WishlistFilterProps) {
+  const handleStatusChange = (status: WishlistState["filter"]["status"]) => {
     dispatch({
       type: "SET_FILTER",
       payload: { status },
     });
   };
 
-  const handlePriorityChange = (priority: TaskItem["priority"]) => {
+  const handlePriorityChange = (priority: WishItem["priority"]) => {
     dispatch({
       type: "SET_FILTER",
       payload: {
@@ -48,7 +51,7 @@ export default function TaskFilter({ filter, dispatch }: TaskFilterProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Filter Tasks by</DropdownMenuLabel>
+        <DropdownMenuLabel>Filter Wishes by</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuLabel className="font-normal">Status</DropdownMenuLabel>
         <DropdownMenuCheckboxItem

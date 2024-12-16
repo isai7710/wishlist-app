@@ -1,33 +1,22 @@
-import { TaskItem, TasksState } from "@/lib/tasks/types";
+import { WishItem, WishlistState } from "@/lib/wishes/types";
 
-const PROMPT_TEMPLATE = `You are a task description generator. Generate a single, clear task description based on the subject provided.
+const PROMPT_TEMPLATE = `You are a wish description generator for a wishlist app. Generate a single, clear wish description based on the subject provided.
 
 Subject: {subject}
 
 Requirements:
-1. Start with an action verb in present tense (e.g., Create, Develop, Write)
+1. A wish can be any physical product (like clothing, electronics, office stationaries, etc.), a vacation destination, a digital service/product, etc.
 2. Include only plain text - no quotes, asterisks, or special characters
 3. Write exactly one sentence
 4. End with a period
-5. Use 15 words or fewer
+5. Use 10 words or fewer
 6. Be specific and actionable
 7. Use professional language
 8. Do not include any labels, prefixes, or metadata
 
-Valid examples:
-- Schedule quarterly review meeting with marketing team.
-- Create social media content calendar for December.
-- Update customer feedback database with recent survey results.
+Respond with only the wish description, nothing else. Do not explain or add context.`;
 
-Invalid examples:
-- "Design new logo" (missing period, has quotes)
-- *Review financial reports* (has asterisks)
-- Task: Send emails (has prefix)
-- Schedule meeting. Create agenda. (multiple sentences)
-
-Respond with only the task description, nothing else. Do not explain or add context.`;
-
-export async function generateTaskText(subject: string = "Software") {
+export async function generateWishText(subject: string = "Electronics") {
   try {
     const response = await fetch("/api/generate", {
       method: "POST",
@@ -71,92 +60,92 @@ export async function generateTaskText(subject: string = "Software") {
 /**
  * Generates random tasks with Hugging Face Inference API
  */
-export async function generateRandomTasks(
+export async function generateRandomWishes(
   count: number = 5,
-  subject: string = "Software",
-): Promise<Omit<TaskItem, "id" | "createdAt">[]> {
+  subject: string = "Electronics",
+): Promise<Omit<WishItem, "id" | "createdAt">[]> {
   // Input validation
   if (count < 1) throw new Error("Count must be at least 1");
   if (!subject.trim()) throw new Error("Prompt cannot be empty");
 
   // create an array of promises for concurrent execution
-  const tasks = await Promise.all(
+  const wishes = await Promise.all(
     Array.from({ length: count }, async (_, index) => {
       try {
         const enhancedPrompt = PROMPT_TEMPLATE.replace("{subject}", subject);
-        const task = await generateTaskText(enhancedPrompt);
+        const wish = await generateWishText(enhancedPrompt);
 
-        const priorities: TaskItem["priority"][] = [
+        const priorities: WishItem["priority"][] = [
           "Low",
           "Low",
           "Medium",
           "Medium",
           "High",
         ];
-        const priority: TaskItem["priority"] =
+        const priority: WishItem["priority"] =
           priorities[Math.floor(Math.random() * priorities.length)];
 
         // explicitly type the return object so typescript won't get angry at us
-        const taskItem: Omit<TaskItem, "id" | "createdAt"> = {
-          task,
+        const wishItem: Omit<WishItem, "id" | "createdAt"> = {
+          wish,
           priority,
           completed: false,
         };
 
-        return taskItem;
+        return wishItem;
       } catch (error) {
         console.error(`Error generating task ${index + 1}:`, error);
         // we need to make sure error case returns the same type
-        const fallbackTask: Omit<TaskItem, "id" | "createdAt"> = {
-          task: `Failed to generate task ${index + 1}`,
-          priority: "Medium" as TaskItem["priority"],
+        const fallbackWish: Omit<WishItem, "id" | "createdAt"> = {
+          wish: `Failed to generate task ${index + 1}`,
+          priority: "Medium" as WishItem["priority"],
           completed: false,
         };
-        return fallbackTask;
+        return fallbackWish;
       }
     }),
   );
 
-  // Filter out any failed tasks (optional)
-  return tasks.filter((task) => !task.task.startsWith("Failed to generate"));
+  // Filter out any failed wishes (optional)
+  return wishes.filter((wish) => !wish.wish.startsWith("Failed to generate"));
 }
 
 /**
- * Filters tasks based on selected priority levels and completion status
- * @param tasks - Array of all task items
+ * Filters wishes based on selected priority levels and completion status
+ * @param wishes - Array of all wish items
  * @param filter - Current filter state containing priorities and status
- * @returns Filtered array of tasks that match the current filter criteria
+ * @returns Filtered array of wishes that match the current filter criteria
  */
-export function getFilteredTasks(
-  tasks: TaskItem[],
-  filter: TasksState["filter"],
+export function getFilteredWishes(
+  wishes: WishItem[],
+  filter: WishlistState["filter"],
 ) {
-  // Return all tasks if no filters are applied
+  // Return all wishes if no filters are applied
   if (filter.priorities.length === 0 && filter.status === null) {
-    return tasks;
+    return wishes;
   }
 
   // filter function maps through items in array and returns new array with item that passes criteria (returns true) we define within
-  return tasks.filter((task) => {
-    // Exclude task if its priority isn't in the selected priorities
+  return wishes.filter((wish) => {
+    // Exclude wish if its priority isn't in the selected priorities
     if (
       filter.priorities.length > 0 &&
-      !filter.priorities.includes(task.priority)
+      !filter.priorities.includes(wish.priority)
     ) {
       return false;
     }
 
     // Handle status filtering
     if (filter.status === "Active") {
-      // we only want incomplete tasks in this case, so keep any task that has
-      // completed property as false (in which case !task.completed returns true)
-      return !task.completed;
+      // we only want incomplete wishes in this case, so keep any wish that has
+      // completed property as false (in which case !wish.completed returns true)
+      return !wish.completed;
     }
     if (filter.status === "Completed") {
-      return task.completed; // same process as before, only keep completed tasks (task.complete returns true)
+      return wish.completed; // same process as before, only keep completed wishes (wish.complete returns true)
     }
 
-    // if we reach this point then there were no filter options set so we can simply return all tasks
+    // if we reach this point then there were no filter options set so we can simply return all wishes
     return true;
   });
 }

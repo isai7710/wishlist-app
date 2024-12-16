@@ -8,22 +8,25 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Blocks, Loader } from "lucide-react";
-import { TaskAction, TasksState } from "@/lib/tasks/types";
+import { WishlistAction, WishlistState } from "@/lib/wishes/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MovingBorder } from "@/components/ui/moving-border";
-import { generateRandomTasks } from "@/lib/tasks/utils";
+import { generateRandomWishes } from "@/lib/wishes/utils";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
-interface TaskSeederProps {
-  errors: Partial<TasksState["errors"]>;
-  dispatch: React.Dispatch<TaskAction>;
+interface WishlistSeederProps {
+  errors: Partial<WishlistState["errors"]>;
+  dispatch: React.Dispatch<WishlistAction>;
 }
 
-export default function TaskSeeder({ errors, dispatch }: TaskSeederProps) {
+export default function WishlistSeeder({
+  errors,
+  dispatch,
+}: WishlistSeederProps) {
   const [seedCount, setSeedCount] = useState<number>(5);
-  const [taskSubject, setTaskSubject] = useState<string>("");
+  const [wishSubject, setWishSubject] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const borderRadius = "0.4rem";
@@ -32,33 +35,33 @@ export default function TaskSeeder({ errors, dispatch }: TaskSeederProps) {
     e.preventDefault();
     setErrorMessage(null);
 
-    if (!taskSubject.trim()) {
-      setErrorMessage("Prompt is required");
+    if (!wishSubject.trim()) {
+      setErrorMessage("Subject is required");
       dispatch({
         type: "SET_ERROR",
-        payload: { prompt: "Prompt is required" },
+        payload: { prompt: "Subject is required" },
       });
       return;
     }
 
     setIsLoading(true);
     try {
-      const seededTasks = await generateRandomTasks(seedCount, taskSubject);
+      const seededWishes = await generateRandomWishes(seedCount, wishSubject);
 
-      seededTasks.forEach((task) => {
+      seededWishes.forEach((wish) => {
         dispatch({
-          type: "ADD_TASK",
-          payload: task,
+          type: "ADD_WISH",
+          payload: wish,
         });
       });
 
-      setTaskSubject("");
+      setWishSubject("");
       dispatch({ type: "CLEAR_ERRORS" });
 
       // Show success toast
       toast({
-        title: "Tasks Generated",
-        description: `Successfully created ${seedCount} new tasks`,
+        title: "Wishes Generated",
+        description: `Successfully created ${seedCount} new wishes with the Hugging Face API`,
       });
     } catch (error) {
       const errorMsg =
@@ -122,9 +125,9 @@ export default function TaskSeeder({ errors, dispatch }: TaskSeederProps) {
             <Input
               id="ai-prompt"
               type="text"
-              value={taskSubject}
+              value={wishSubject}
               onChange={(e) => {
-                setTaskSubject(e.target.value);
+                setWishSubject(e.target.value);
                 if (errors.prompt) {
                   dispatch({
                     type: "SET_ERROR",
@@ -165,7 +168,7 @@ export default function TaskSeeder({ errors, dispatch }: TaskSeederProps) {
               </>
             ) : (
               <p>
-                Add {seedCount} Task{seedCount > 1 ? "s" : ""}{" "}
+                Add {seedCount} Wish{seedCount > 1 ? "es" : ""}
               </p>
             )}
           </Button>

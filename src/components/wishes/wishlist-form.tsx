@@ -8,29 +8,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import TaskSeeder from "@/components/tasks/task-seeder";
-import TaskFilter from "@/components/tasks/task-filter";
+import WishlistSeeder from "@/components/wishes/wishlist-seeder";
+import WishlistFilter from "@/components/wishes/wishlist-filter";
 import { Plus } from "lucide-react";
-import { TaskItem, TasksState, TaskAction } from "@/lib/tasks/types";
+import { WishItem, WishlistState, WishlistAction } from "@/lib/wishes/types";
 import { cn } from "@/lib/utils";
 
-interface TaskFormProps {
-  errors: TasksState["errors"];
-  dispatch: React.Dispatch<TaskAction>;
-  filter: Partial<TasksState["filter"]>;
+interface WishlistFormProps {
+  errors: WishlistState["errors"];
+  dispatch: React.Dispatch<WishlistAction>;
+  filter: Partial<WishlistState["filter"]>;
 }
 
-export default function TaskForm({ errors, dispatch, filter }: TaskFormProps) {
-  const [taskInput, setTaskInput] = useState<string>("");
-  const [priorityInput, setPriorityInput] = useState<TaskItem["priority"] | "">(
+export default function WishlistForm({
+  errors,
+  dispatch,
+  filter,
+}: WishlistFormProps) {
+  const [wishInput, setWishInput] = useState<string>("");
+  const [priorityInput, setPriorityInput] = useState<WishItem["priority"] | "">(
     "",
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const errors: Partial<TasksState["errors"]> = {};
-    if (!taskInput.trim()) {
-      errors.task = "Required";
+    const errors: Partial<WishlistState["errors"]> = {};
+    if (!wishInput.trim()) {
+      errors.wish = "Required";
     }
     if (!priorityInput) {
       errors.priority = "Priority must be selected";
@@ -43,18 +47,18 @@ export default function TaskForm({ errors, dispatch, filter }: TaskFormProps) {
       return;
     }
 
-    const priority = priorityInput as TaskItem["priority"];
+    const priority = priorityInput as WishItem["priority"];
 
     dispatch({
-      type: "ADD_TASK",
+      type: "ADD_WISH",
       payload: {
-        task: taskInput,
+        wish: wishInput,
         priority,
         completed: false,
       },
     });
 
-    setTaskInput("");
+    setWishInput("");
     setPriorityInput("");
     dispatch({ type: "CLEAR_ERRORS" });
   };
@@ -69,31 +73,31 @@ export default function TaskForm({ errors, dispatch, filter }: TaskFormProps) {
         <div className="flex-grow">
           <Input
             type="text"
-            value={taskInput}
+            value={wishInput}
             onChange={(e) => {
-              setTaskInput(e.target.value);
-              if (errors.task) {
+              setWishInput(e.target.value);
+              if (errors.wish) {
                 dispatch({
                   type: "SET_ERROR",
-                  payload: { task: undefined },
+                  payload: { wish: undefined },
                 });
               }
             }}
             placeholder="Enter a new task"
             className={cn(
               "flex-grow",
-              errors.task && "border-red-500 focus-visible:ring-red-500",
+              errors.wish && "border-red-500 focus-visible:ring-red-500",
             )}
           />
-          {errors.task && (
-            <p className="text-xs sm:text-sm text-red-500">{errors.task}</p>
+          {errors.wish && (
+            <p className="text-xs sm:text-sm text-red-500">{errors.wish}</p>
           )}
         </div>
         <div>
           <Select
             value={priorityInput}
             onValueChange={(value) => {
-              setPriorityInput(value as TaskItem["priority"]);
+              setPriorityInput(value as WishItem["priority"]);
               if (errors.priority) {
                 dispatch({
                   type: "SET_ERROR",
@@ -129,8 +133,8 @@ export default function TaskForm({ errors, dispatch, filter }: TaskFormProps) {
       >
         <Plus />
       </Button>
-      <TaskSeeder errors={errors} dispatch={dispatch} />
-      <TaskFilter filter={filter} dispatch={dispatch} />
+      <WishlistSeeder errors={errors} dispatch={dispatch} />
+      <WishlistFilter filter={filter} dispatch={dispatch} />
     </div>
   );
 }

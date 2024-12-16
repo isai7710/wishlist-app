@@ -9,7 +9,7 @@ interface HeaderProps {
 export default function Header({ darkMode, toggleDarkMode }: HeaderProps) {
   return (
     <header className="bg-background w-full max-w-4xl mx-auto px-4 pt-4 flex justify-between items-center">
-      <h1 className="text-2xl font-bold">Task Priority Manager</h1>
+      <h1 className="text-2xl font-bold">Wishlist Manager</h1>
       <div className="flex items-center space-x-4">
         <Button variant="outline" size="icon" onClick={toggleDarkMode}>
           {darkMode ? (
