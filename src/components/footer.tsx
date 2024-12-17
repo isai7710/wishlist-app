@@ -8,11 +8,15 @@ export default function Footer() {
           &copy; 2024 Wishlist Manager by Isai Sanchez. All rights reserved.
         </p>
         <div className="flex items-center space-x-4">
-          <a href="/" className="hover:text-foreground transition-colors">
+          <a
+            href="https://isais.dev/blog/wishlist-app"
+            target="_blank"
+            className="hover:text-foreground transition-colors"
+          >
             How I built this
           </a>
           <a
-            href="https://github.com/isai7710/priority-task-manager"
+            href="https://github.com/isai7710/wishlist-app"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center space-x-1 hover:text-foreground transition-colors"
