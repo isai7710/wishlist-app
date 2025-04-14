@@ -18,11 +18,18 @@ export interface WishlistState {
     prompt?: string;
   };
   selectedWishes: string[];
+  ui: {
+    darkMode: boolean;
+    bulkSelectionMode: boolean;
+  };
 }
 
 export type WishlistAction =
   // --- INDIVIDUAL WISH ACTIONS ---
-  | { type: "ADD_WISH"; payload: Omit<WishItem, "id" | "createdAt"> }
+  | {
+      type: "ADD_WISH";
+      payload: Omit<WishItem, "id" | "createdAt" | "completed">;
+    }
   | {
       type: "DELETE_WISH";
       payload: string; // id of the wish to delete
@@ -66,4 +73,7 @@ export type WishlistAction =
     }
   | { type: "CLEAR_ERRORS" }
   // --- FILTERING ACTIONS
-  | { type: "SET_FILTER"; payload: Partial<WishlistState["filter"]> };
+  | { type: "SET_FILTER"; payload: Partial<WishlistState["filter"]> }
+  // --- UI STATE ACTIONS ---
+  | { type: "TOGGLE_DARK_MODE" }
+  | { type: "TOGGLE_BULK_SELECTION_MODE" };

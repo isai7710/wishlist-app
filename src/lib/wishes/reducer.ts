@@ -22,7 +22,7 @@ export function wishlistReducer(
             id: nanoid(),
             wish: action.payload.wish,
             priority: action.payload.priority,
-            completed: action.payload.completed,
+            completed: false,
             createdAt: new Date(),
           },
         ],
@@ -143,6 +143,18 @@ export function wishlistReducer(
           ...state.filter,
           ...action.payload,
         },
+      };
+
+    case "TOGGLE_DARK_MODE":
+      return {
+        ...state,
+        ui: { ...state.ui, darkMode: !state.ui.darkMode },
+      };
+
+    case "TOGGLE_BULK_SELECTION_MODE":
+      return {
+        ...state,
+        ui: { ...state.ui, bulkSelectionMode: !state.ui.bulkSelectionMode },
       };
 
     default:
