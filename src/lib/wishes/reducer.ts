@@ -9,13 +9,13 @@ export function wishlistReducer(
 ): WishlistState {
   switch (action.type) {
     case "ADD_WISH":
-      // return a NEW state
+      // each action type must return a NEW state
       return {
-        // spread previous state to preserve previous properties
+        // spread current state to preserve current properties
         ...state,
         // create new array for wishItems
         wishItems: [
-          // spread previous wishItems to keep all existing tasks
+          // spread current wishItems to keep all existing tasks
           ...state.wishItems,
           // add new wish item with the action's accompanying payload data AND generated values for id and createdAt properties
           {
@@ -31,13 +31,14 @@ export function wishlistReducer(
     case "DELETE_WISH":
       return {
         ...state,
+        //  return new wish items array with the wish id to delete filtered out (deleted)
         wishItems: state.wishItems.filter((wish) => wish.id !== action.payload),
       };
 
     case "UPDATE_PRIORITY":
       return {
         ...state,
-        // return NEW wish array using map method
+        // return NEW wish items array with the updated priority using the map method
         wishItems: state.wishItems.map((wish) =>
           // map over every wish item in the array to check whether it matches the payload id
           // if it does, create a new wish object with existing properties but with updated priority
