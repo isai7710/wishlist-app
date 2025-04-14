@@ -23,31 +23,19 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "motion/react";
-import { WishlistAction, WishItem, WishlistState } from "@/lib/wishes/types";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { useWishlist } from "@/hooks/use-wishlist";
+import { WishItem } from "@/lib/wishes/types";
 
-interface BulkActionProps {
-  selectedWishes: WishlistState["selectedWishes"];
-  wishes: WishItem[];
-  dispatch: React.Dispatch<WishlistAction>;
-  bulkSelectionMode: boolean;
-  setBulkSelectionMode: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export default function BulkActions({
-  selectedWishes,
-  wishes,
-  dispatch,
-  bulkSelectionMode,
-  setBulkSelectionMode,
-}: BulkActionProps) {
+export default function BulkActions() {
+  const { state, dispatch } = useWishlist();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleAction = (action: () => void, errorMessage: string) => {
-    if (selectedWishes.length === 0) {
+    if (state.selectedWishes.length === 0) {
       toast({
         variant: "destructive",
         title: errorMessage,
@@ -61,25 +49,26 @@ export default function BulkActions({
     <div className="flex flex-col md:flex-row md:items-start justify-between pt-3 px-3">
       <div className="flex flex-col items-center mb-4 gap-1 sm:mb-0">
         <Button
-          variant={bulkSelectionMode ? "secondary" : "outline"}
+          variant={state.ui.bulkSelectionMode ? "secondary" : "outline"}
           size="sm"
-          onClick={() => setBulkSelectionMode(!bulkSelectionMode)}
-          className={bulkSelectionMode ? "border border-white" : ""}
+          onClick={() => dispatch({ type: "TOGGLE_BULK_SELECTION_MODE" })}
         >
-          <span className={bulkSelectionMode ? "font-bold" : "font-medium"}>
+          <span
+            className={state.ui.bulkSelectionMode ? "font-bold" : "font-medium"}
+          >
             Bulk Actions
           </span>
         </Button>
         <AnimatePresence>
-          {bulkSelectionMode && (
+          {state.ui.bulkSelectionMode && (
             <motion.p
               initial={{ x: -10, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -10, opacity: 0 }}
               className="text-xs text-muted-foreground"
             >
-              {selectedWishes.length} wish
-              {selectedWishes.length !== 1 ? "s" : ""} selected
+              {state.selectedWishes.length} wish
+              {state.selectedWishes.length !== 1 ? "s" : ""} selected
             </motion.p>
           )}
         </AnimatePresence>
@@ -87,7 +76,7 @@ export default function BulkActions({
 
       <div className="flex items-center justify-center gap-2">
         <AnimatePresence>
-          {bulkSelectionMode &&
+          {state.ui.bulkSelectionMode &&
             [
               <Button
                 onClick={() =>
@@ -105,7 +94,7 @@ export default function BulkActions({
               </Button>,
               <Button
                 onClick={() => {
-                  if (wishes.length === 0) {
+                  if (state.wishItems.length === 0) {
                     toast({
                       variant: "destructive",
                       title: "No wishes available to select",
@@ -118,7 +107,7 @@ export default function BulkActions({
                 className="p-2"
               >
                 <span className="hidden lg:block">
-                  {selectedWishes.length === wishes.length
+                  {state.selectedWishes.length === state.wishItems.length
                     ? "Deselect All"
                     : "Select All"}
                 </span>
@@ -127,7 +116,7 @@ export default function BulkActions({
               <DropdownMenu
                 open={isDropdownOpen}
                 onOpenChange={(open) => {
-                  if (open && selectedWishes.length === 0) {
+                  if (open && state.selectedWishes.length === 0) {
                     toast({
                       variant: "destructive",
                       title: "Select wishes to update please",
@@ -154,8 +143,11 @@ export default function BulkActions({
                             payload: priority as WishItem["priority"],
                           });
                           toast({
-                            title: `Updated ${selectedWishes.length} wish priorit${selectedWishes.length > 1 ? "ies" : "y"} to ${priority}`,
+                            title: `Updated ${state.selectedWishes.length} wish${
+                              state.selectedWishes.length > 1 ? "es" : ""
+                            } to ${priority} priority`,
                           });
+                          setIsDropdownOpen(false);
                         }, "Select wishes to update please")
                       }
                     >
@@ -196,7 +188,7 @@ export default function BulkActions({
                 <DialogTrigger asChild>
                   <Button
                     onClick={(e) => {
-                      if (selectedWishes.length === 0) {
+                      if (state.selectedWishes.length === 0) {
                         e.preventDefault();
                         toast({
                           variant: "destructive",
@@ -217,10 +209,10 @@ export default function BulkActions({
                   <DialogHeader>
                     <DialogTitle>Are you sure?</DialogTitle>
                     <DialogDescription>
-                      You are about to delete {selectedWishes.length} selected
-                      wish
-                      {selectedWishes.length !== 1 ? "es" : ""}. This action
-                      cannot be undone.
+                      You are about to delete {state.selectedWishes.length}{" "}
+                      selected wish
+                      {state.selectedWishes.length !== 1 ? "es" : ""}. This
+                      action cannot be undone.
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
@@ -234,7 +226,7 @@ export default function BulkActions({
                         onClick={() => {
                           dispatch({ type: "BULK_DELETE" });
                           toast({
-                            title: `Deleted ${selectedWishes.length} wish${selectedWishes.length > 1 ? "es" : ""}`,
+                            title: `Deleted ${state.selectedWishes.length} wish${state.selectedWishes.length > 1 ? "es" : ""}`,
                           });
                         }}
                         variant="destructive"

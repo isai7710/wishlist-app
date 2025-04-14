@@ -8,23 +8,20 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Blocks, Loader } from "lucide-react";
-import { WishlistAction, WishlistState } from "@/lib/wishes/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MovingBorder } from "@/components/ui/moving-border";
 import { generateRandomWishes } from "@/lib/wishes/utils";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { useWishlist } from "@/hooks/use-wishlist";
 
-interface WishlistSeederProps {
-  errors: Partial<WishlistState["errors"]>;
-  dispatch: React.Dispatch<WishlistAction>;
-}
+export default function WishlistSeeder() {
+  const {
+    state: { errors },
+    dispatch,
+  } = useWishlist();
 
-export default function WishlistSeeder({
-  errors,
-  dispatch,
-}: WishlistSeederProps) {
   const [seedCount, setSeedCount] = useState<number>(5);
   const [wishSubject, setWishSubject] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);

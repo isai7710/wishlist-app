@@ -9,17 +9,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Filter } from "lucide-react";
-import { WishlistAction, WishlistState, WishItem } from "@/lib/wishes/types";
+import { WishlistState, WishItem } from "@/lib/wishes/types";
+import { useWishlist } from "@/hooks/use-wishlist";
 
-interface WishlistFilterProps {
-  filter: Partial<WishlistState["filter"]>;
-  dispatch: React.Dispatch<WishlistAction>;
-}
-
-export default function WishlistFilter({
-  filter,
-  dispatch,
-}: WishlistFilterProps) {
+export default function WishlistFilter() {
+  const {
+    state: { filter },
+    dispatch,
+  } = useWishlist();
   const handleStatusChange = (status: WishlistState["filter"]["status"]) => {
     dispatch({
       type: "SET_FILTER",

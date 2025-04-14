@@ -11,20 +11,15 @@ import {
 import WishlistSeeder from "@/components/wishes/wishlist-seeder";
 import WishlistFilter from "@/components/wishes/wishlist-filter";
 import { Plus } from "lucide-react";
-import { WishItem, WishlistState, WishlistAction } from "@/lib/wishes/types";
+import { WishItem, WishlistState } from "@/lib/wishes/types";
 import { cn } from "@/lib/utils";
+import { useWishlist } from "@/hooks/use-wishlist";
 
-interface WishlistFormProps {
-  errors: WishlistState["errors"];
-  dispatch: React.Dispatch<WishlistAction>;
-  filter: Partial<WishlistState["filter"]>;
-}
-
-export default function WishlistForm({
-  errors,
-  dispatch,
-  filter,
-}: WishlistFormProps) {
+export default function WishlistForm() {
+  const {
+    state: { errors },
+    dispatch,
+  } = useWishlist();
   const [wishInput, setWishInput] = useState<string>("");
   const [priorityInput, setPriorityInput] = useState<WishItem["priority"] | "">(
     "",
@@ -32,6 +27,7 @@ export default function WishlistForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Basic form validation logic:
     const errors: Partial<WishlistState["errors"]> = {};
     if (!wishInput.trim()) {
       errors.wish = "Required";
@@ -47,12 +43,12 @@ export default function WishlistForm({
       return;
     }
 
+    // if errors are cleared, we use the dispatch to add the new wish to the state
     dispatch({
       type: "ADD_WISH",
       payload: {
         wish: wishInput,
         priority: priorityInput as WishItem["priority"],
-        completed: false,
       },
     });
 
@@ -131,8 +127,8 @@ export default function WishlistForm({
       >
         <Plus />
       </Button>
-      <WishlistSeeder errors={errors} dispatch={dispatch} />
-      <WishlistFilter filter={filter} dispatch={dispatch} />
+      <WishlistSeeder />
+      <WishlistFilter />
     </div>
   );
 }

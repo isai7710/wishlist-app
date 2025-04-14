@@ -2,7 +2,7 @@ import { Github } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-background border-t">
+    <footer className="border-t">
       <div className="max-w-4xl mx-auto p-4 flex justify-between items-center text-xs text-muted-foreground">
         <p>
           &copy; 2024 Wishlist Manager by Isai Sanchez. All rights reserved.

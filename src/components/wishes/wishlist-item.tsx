@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { WishlistAction, WishItem, WishlistState } from "@/lib/wishes/types";
+import { WishItem } from "@/lib/wishes/types";
 import { MoreHorizontal, Check } from "lucide-react";
 import {
   DropdownMenu,
@@ -15,26 +15,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { useWishlist } from "@/hooks/use-wishlist";
 
 interface WishlistItemProps {
   wish: WishItem;
-  selectedWishes: WishlistState["selectedWishes"];
-  dispatch: React.Dispatch<WishlistAction>;
-  bulkSelectionMode: boolean;
-  setBulkSelectionMode: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function WishlistItem({
-  wish,
-  selectedWishes,
-  dispatch,
-  bulkSelectionMode,
-  setBulkSelectionMode,
-}: WishlistItemProps) {
+export default function WishlistItem({ wish }: WishlistItemProps) {
+  const { state, dispatch } = useWishlist();
   return (
-    <div className="flex items-center space-x-2 p-2 rounded-md bg-card hover:text-accent-foreground transition-colors">
+    <div className="flex items-center space-x-2 p-2 rounded-md hover:text-accent-foreground transition-colors">
       <AnimatePresence>
-        {bulkSelectionMode && (
+        {state.ui.bulkSelectionMode && (
           <motion.div
             initial={{ x: -10, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -42,7 +34,7 @@ export default function WishlistItem({
             className="flex"
           >
             <Checkbox
-              checked={selectedWishes.includes(wish.id)}
+              checked={state.selectedWishes.includes(wish.id)}
               onClick={() =>
                 dispatch({
                   type: "TOGGLE_SELECT",
@@ -57,8 +49,8 @@ export default function WishlistItem({
       </AnimatePresence>
       <div
         onClick={() => {
-          if (!bulkSelectionMode) {
-            setBulkSelectionMode(!bulkSelectionMode);
+          if (!state.ui.bulkSelectionMode) {
+            dispatch({ type: "TOGGLE_BULK_SELECTION_MODE" });
           }
           dispatch({ type: "TOGGLE_SELECT", payload: wish.id });
         }}
