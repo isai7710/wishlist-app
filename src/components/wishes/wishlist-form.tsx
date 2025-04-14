@@ -47,13 +47,11 @@ export default function WishlistForm({
       return;
     }
 
-    const priority = priorityInput as WishItem["priority"];
-
     dispatch({
       type: "ADD_WISH",
       payload: {
         wish: wishInput,
-        priority,
+        priority: priorityInput as WishItem["priority"],
         completed: false,
       },
     });
@@ -64,7 +62,7 @@ export default function WishlistForm({
   };
 
   return (
-    <div className="flex items-center gap-2 w-full">
+    <div className="flex items-start gap-2 w-full">
       <form
         id="add-task-form"
         onSubmit={handleSubmit}
