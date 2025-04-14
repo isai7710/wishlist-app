@@ -24,7 +24,7 @@ interface WishlistItemProps {
   setBulkSelectionMode: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function WishlistItem({
+export default function WishlistItem({
   wish,
   selectedWishes,
   dispatch,
