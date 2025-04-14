@@ -2,20 +2,6 @@ import { createContext, useContext } from "react";
 import { WishlistState, WishlistAction } from "@/lib/wishes/types";
 import { Dispatch } from "react";
 
-export const INITIAL_STATE: WishlistState = {
-  wishItems: [],
-  filter: {
-    priorities: [],
-    status: null,
-  },
-  errors: {},
-  selectedWishes: [],
-  ui: {
-    darkMode: false,
-    bulkSelectionMode: false,
-  },
-};
-
 interface WishlistContextType {
   state: WishlistState;
   dispatch: Dispatch<WishlistAction>;
