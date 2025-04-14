@@ -1,25 +1,27 @@
 import { useReducer, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { wishlistReducer } from "@/lib/wishes/reducer";
 import { getFilteredWishes } from "@/lib/wishes/utils";
 import { WishlistState } from "@/lib/wishes/types";
+
+import { Card, CardContent } from "@/components/ui/card";
 import { Toaster } from "@/components/ui/toaster";
 import WishlistForm from "@/components/wishes/wishlist-form";
 import BulkActions from "@/components/wishes/bulk-actions";
-import { WishlistItem } from "@/components/wishes/wishlist-item";
+import WishlistItem from "@/components/wishes/wishlist-item";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 
+const initialState: WishlistState = {
+  wishItems: [],
+  filter: {
+    priorities: [],
+    status: null,
+  },
+  errors: {},
+  selectedWishes: [],
+};
+
 export default function WishlistApp() {
-  const initialState: WishlistState = {
-    wishItems: [],
-    filter: {
-      priorities: [],
-      status: null,
-    },
-    errors: {},
-    selectedWishes: [],
-  };
   const [state, dispatch] = useReducer(wishlistReducer, initialState);
 
   const [darkMode, setDarkMode] = useState(false);
