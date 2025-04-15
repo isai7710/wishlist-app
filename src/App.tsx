@@ -7,13 +7,19 @@ import WishlistItem from "@/components/wishes/wishlist-item";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { useWishlist } from "./hooks/use-wishlist";
+import { useEffect } from "react";
 
 export default function WishlistApp() {
   const { state } = useWishlist();
+  useEffect(() => {
+    if (state.ui.darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [state.ui.darkMode]);
   return (
-    <div
-      className={`bg-background text-foreground min-h-screen flex flex-col transition-colors duration-300 ${state.ui.darkMode ? "dark" : ""}`}
-    >
+    <div className="bg-background text-foreground min-h-screen flex flex-col transition-colors duration-300">
       <Header />
       <main className="flex-grow">
         <div className="max-w-4xl mx-auto p-4 space-y-4">
