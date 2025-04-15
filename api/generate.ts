@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { InferenceClient } from "@huggingface/inference";
 
 export default async function generate(
   request: VercelRequest,
@@ -11,7 +12,9 @@ export default async function generate(
     if (request.method !== "POST") {
       return response.status(405).json({ error: "Method not allowed" });
     }
-    if (!process.env.HUGGING_FACE_API_TOKEN) {
+
+    const token = process.env.HUGGING_FACE_API_TOKEN;
+    if (!token) {
       throw new Error(
         "Hugging Face API token not found in environment variables",
       );
@@ -24,39 +27,33 @@ export default async function generate(
       });
     }
 
-    const hfResponse = await fetch(
-      "https://api-inference.huggingface.co/models/google/gemma-2-2b-it",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.HUGGING_FACE_API_TOKEN}`,
-          "Content-Type": "application/json",
-          "x-use-cache": "false", // disable cache-layer resulting in new query when inputs are the same
+    const client = new InferenceClient(process.env.HUGGING_FACE_API_TOKEN);
+    const chatCompletion = await client.chatCompletion({
+      provider: "hf-inference",
+      model: "mistralai/Mistral-7B-Instruct-v0.3",
+      messages: [
+        {
+          role: "user",
+          content: subject,
         },
-        body: JSON.stringify({
-          inputs: subject,
-          parameters: {
-            max_new_tokens: 50,
-            temperature: 0.7,
-            top_p: 0.95,
-            return_full_text: false,
-          },
-        }),
-        signal: controller.signal,
-      },
-    );
-    if (!hfResponse.ok) {
-      const error = await hfResponse.text();
-      throw new Error(`Hugging Face API error: ${error}`);
-    }
-    const result = await hfResponse.json();
-    if (!Array.isArray(result) || !result[0]?.generated_text) {
-      throw new Error("Invalid response format from Hugging Face API");
+      ],
+      max_tokens: 512,
+    });
+
+    const generatedWish = chatCompletion.choices?.[0]?.message?.content;
+
+    if (!generatedWish) {
+      throw new Error(
+        "No valid message content returned from Hugging Face API",
+      );
     }
 
-    return response.status(200).json(result);
+    return response.status(200).json({ result: generatedWish });
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Hugging Face API Error", {
+      requestBody: request.body,
+      error: error instanceof Error ? error.message : error,
+    });
     return response
       .status(500)
       .json({ error: "Failed to generate wish description" });
