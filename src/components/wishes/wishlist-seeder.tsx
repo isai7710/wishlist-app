@@ -11,7 +11,7 @@ import { Blocks, Loader } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MovingBorder } from "@/components/ui/moving-border";
-import { generateRandomWishes } from "@/lib/wishes/utils";
+import { generateAIWishes } from "@/lib/wishes/utils";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useWishlist } from "@/hooks/use-wishlist";
@@ -22,7 +22,7 @@ export default function WishlistSeeder() {
     dispatch,
   } = useWishlist();
 
-  const [seedCount, setSeedCount] = useState<number>(5);
+  const [seedCount, setSeedCount] = useState<number>(3);
   const [wishSubject, setWishSubject] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -42,8 +42,9 @@ export default function WishlistSeeder() {
     }
 
     setIsLoading(true);
+
     try {
-      const seededWishes = await generateRandomWishes(seedCount, wishSubject);
+      const seededWishes = await generateAIWishes(seedCount, wishSubject);
 
       seededWishes.forEach((wish) => {
         dispatch({
