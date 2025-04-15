@@ -1,42 +1,31 @@
 import { WishItem, WishlistState } from "@/lib/wishes/types";
 
-const PROMPT_TEMPLATE = `You are a wish description generator for a wishlist app. Generate a single, clear wish description based on the subject provided.
+const PROMPT_TEMPLATE = `You are a wish description generator. Generate a single, clear wish no more than 10 words in length based on the subject provided. Subject: {subject}`;
 
-Subject: {subject}
-
-Requirements:
-1. A wish can be any physical product (like clothing, electronics, office stationaries, etc.), a vacation destination, a digital service/product, etc.
-2. Include only plain text - no quotes, asterisks, or special characters
-3. Write exactly one sentence
-4. End with a period
-5. Use 10 words or fewer
-6. Be specific and actionable
-7. Use professional language
-8. Do not include any labels, prefixes, or metadata
-
-Respond with only the wish description, nothing else. Do not explain or add context.`;
-
-export async function generateWishText(subject: string = "Electronics") {
+// calls the api/ route to generate a wish description for the given subject
+export async function fetchWish(subject: string = "Electronics") {
   try {
     const response = await fetch("/api/generate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ subject: subject }),
+      body: JSON.stringify({ subject }),
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to generate description: ${response.statusText}`);
+      throw new Error(
+        `Failed to generate wish, API Error: ${response.statusText}`,
+      );
     }
 
-    const result = await response.json();
+    const data = await response.json();
 
-    if (!result[0]?.generated_text) {
-      throw new Error("No generated text received");
+    if (!data.result || typeof data.result !== "string") {
+      throw new Error("No valid wish returned from API");
     }
     return (
-      result[0].generated_text
+      data.result
         .trim()
         // Remove quotes and asterisks
         .replace(/["*`]/g, "")
@@ -58,9 +47,9 @@ export async function generateWishText(subject: string = "Electronics") {
 }
 
 /**
- * Generates random tasks with Hugging Face Inference API
+ * Generates random wishes with Hugging Face Inference API
  */
-export async function generateRandomWishes(
+export async function generateAIWishes(
   count: number = 5,
   subject: string = "Electronics",
 ): Promise<Omit<WishItem, "id" | "createdAt">[]> {
@@ -68,46 +57,45 @@ export async function generateRandomWishes(
   if (count < 1) throw new Error("Count must be at least 1");
   if (!subject.trim()) throw new Error("Prompt cannot be empty");
 
-  // create an array of promises for concurrent execution
-  const wishes = await Promise.all(
-    Array.from({ length: count }, async (_, index) => {
-      try {
-        const enhancedPrompt = PROMPT_TEMPLATE.replace("{subject}", subject);
-        const wish = await generateWishText(enhancedPrompt);
+  // 'tasks' is an array of promises, it doesn't hold final data
+  // each promise in this array represents a 'task' that is ongoing or will resolve into a wish
+  const tasks = Array.from({ length: count }, async (_, index) => {
+    try {
+      const enhancedPrompt = PROMPT_TEMPLATE.replace("{subject}", subject);
+      const wish = await fetchWish(enhancedPrompt);
 
-        const priorities: WishItem["priority"][] = [
-          "Low",
-          "Low",
-          "Medium",
-          "Medium",
-          "High",
-        ];
-        const priority: WishItem["priority"] =
-          priorities[Math.floor(Math.random() * priorities.length)];
+      const priorities: WishItem["priority"][] = [
+        "Low",
+        "Low",
+        "Medium",
+        "Medium",
+        "High",
+      ];
+      const priority: WishItem["priority"] =
+        priorities[Math.floor(Math.random() * priorities.length)];
 
-        // explicitly type the return object so typescript won't get angry at us
-        const wishItem: Omit<WishItem, "id" | "createdAt"> = {
-          wish,
-          priority,
-          completed: false,
-        };
+      return {
+        wish,
+        priority,
+        completed: false,
+      };
+    } catch (error) {
+      console.error(`Error generating task ${index + 1}:`, error);
+      // we need to make sure error case returns the same type
+      return {
+        wish: `Failed to generate task ${index + 1}`,
+        priority: "Medium" as WishItem["priority"],
+        completed: false,
+      };
+    }
+  });
+  // once "Promise.all()" resolves, we get our actual real array of 'wishes'
+  const wishes = await Promise.all(tasks);
 
-        return wishItem;
-      } catch (error) {
-        console.error(`Error generating task ${index + 1}:`, error);
-        // we need to make sure error case returns the same type
-        const fallbackWish: Omit<WishItem, "id" | "createdAt"> = {
-          wish: `Failed to generate task ${index + 1}`,
-          priority: "Medium" as WishItem["priority"],
-          completed: false,
-        };
-        return fallbackWish;
-      }
-    }),
+  // Filter out any failed wishes
+  return wishes.filter(
+    (wishItem) => !wishItem.wish.startsWith("Failed to generate"),
   );
-
-  // Filter out any failed wishes (optional)
-  return wishes.filter((wish) => !wish.wish.startsWith("Failed to generate"));
 }
 
 /**
